@@ -3,26 +3,25 @@ if (typeof wtester === 'undefined') {
         wt = require(__dirname + "/../../lib/wtester.js");
         wtester = wt.wtester;
     } else {//on browser debug
-        wt_debug = function (env) {
-            if (!env.ctx) {
-                env.ctx = {};
-            }
-            if (pre) {
-                pre(env, function () {
-                    if (window.location.href.match(murl)) {
-                        worker(env, function () { });
-                    }
-                });
-            } else {
-                if (window.location.href.match(murl)) {
-                    worker(env, function () { });
-                }
-            }
-        };
         wtester = function (name, starter, opts, exec) {
             exec(function (murl, open, worker, pre) {
                 return {
-                    debug: wt_debug,
+                    debug: function (env) {
+                        if (!env.ctx) {
+                            env.ctx = {};
+                        }
+                        if (pre) {
+                            pre(env, function () {
+                                if (window.location.href.match(murl)) {
+                                    worker(env, function () { });
+                                }
+                            });
+                        } else {
+                            if (window.location.href.match(murl)) {
+                                worker(env, function () { });
+                            }
+                        }
+                    },
                 };
             });
         };
