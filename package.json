@@ -1,0 +1,20 @@
+{
+  "name": "webtester",
+  "version": "0.1.0",
+  "author": "Centny <centny@gmail.com>",
+  "devDependencies": {},
+  "dependencies": {
+    "selenium-webdriver": "^3.0.1",
+    "websocket": "^1.0.23",
+    "http-proxy": "^1.15.2"
+  },
+  "description": "The simple integration testing tools for website",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Centny/WebTester"
+  },
+  "bin": {
+    "wtester": "lib/cli.js"
+  }
+}
