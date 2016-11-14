@@ -16,5 +16,6 @@
   },
   "bin": {
     "wtester": "lib/cli.js"
-  }
+  },
+  "readme": "README.md"
 }

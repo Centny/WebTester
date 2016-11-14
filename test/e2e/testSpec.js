@@ -30,6 +30,7 @@ if (typeof wtester === 'undefined') {
 }
 wtester("case1", "http://localhost:8080/web/page1.html", null, function (flow) {
     flow("^http://localhost:8080/web/page1\\.html(\\?.*)?$", true, function (env, done) {
+        //the test code on page1.html
         env.ctx.testing = "login";
         document.getElementById("login").click();
         console.log("testing click login done...");
@@ -38,13 +39,14 @@ wtester("case1", "http://localhost:8080/web/page1.html", null, function (flow) {
         done();
     }).debug({});
     flow("http://localhost:8080/web/page2\\.html(\\?.*)?", false, function (env, done) {
+        //the test code on page2.html
         if (env.ctx.testing != "login") {
             throw "fail";
         }
         document.getElementById("account").value = "abc";
         console.log("testing login done...");
         done();
-    }).debug({
+    }).debug({//debug the test code on page2.
         ctx: {
             testing: "login",
         },
