@@ -15,10 +15,10 @@ The simple integration testing tools for website
 npm install -g webdriver-manager
 ```
 
-##### Install `webtester`
+##### Install `wtester`
 
 ```
-npm install -g webtester
+npm install -g wtester
 ```
 
 ### Start
