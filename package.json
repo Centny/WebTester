@@ -1,6 +1,6 @@
 {
   "name": "wtester",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Centny <centny@gmail.com>",
   "devDependencies": {},
   "dependencies": {
@@ -17,5 +17,5 @@
   "bin": {
     "wtester": "lib/cli.js"
   },
-  "readme": "README.md"
+  "readmeFilename": "README.md"
 }
