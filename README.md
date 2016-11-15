@@ -11,13 +11,13 @@ The simple integration testing tools for website
 
 ##### Install `webdriver-manager`
 
-```
+```.sh
 npm install -g webdriver-manager
 ```
 
 ##### Install `wtester`
 
-```
+```.sh
 npm install -g wtester
 ```
 
@@ -25,7 +25,7 @@ npm install -g wtester
 
 ##### Create test spec(e2e/testSpec.js)
 
-```
+```.js
 wtester("case1", "http://localhost:8080/web/page1.html", null, function (flow) {
     flow("^http://localhost:8080/web/page1\\.html(\\?.*)?$", true, function (env, done) {
         env.ctx.testing = "login";
@@ -52,7 +52,7 @@ wtester("case1", "http://localhost:8080/web/page1.html", null, function (flow) {
 
 ##### Create configure file(wtester-conf.js)
 
-```
+```.js
 exports.config = {
     port: 8880,//proxy port
     selenium: 'http://127.0.0.1:4444/wd/hub',
@@ -71,20 +71,20 @@ exports.config = {
 
 ##### Run
 
-```
+```.sh
 wtester wtester-conf.js
 ```
 
 ### Run the exampe
 * download code
 
-```
+```.sh
 git clone https://github.com/Centny/WebTester.git
 ```
 
 * start static server
 
-```
+```.sh
 cd WebTester/test
 npm install connect serve-static
 ./run.js
@@ -92,13 +92,13 @@ npm install connect serve-static
 
 * start webdriver 
 
-```
+```.sh
 webdriver-manager start
 ```
 
 * run test
 
-```
+```.sh
 cd WebTester/test
 wtester wtester-conf.js
 ```
