@@ -3,7 +3,7 @@ The simple integration testing tools for website
 
 ### Features
 
-* running test code on web page(not nodejs).
+* auto inject the code to web page and run it code on browser(not nodejs).
 * transfter running context between two page.
 * load browser by configure.
 * multi spec supported
@@ -15,7 +15,10 @@ The simple integration testing tools for website
 
 ```.sh
 npm install -g webdriver-manager
+webdriver-manager update
 ```
+
+more is on <https://github.com/angular/webdriver-manager>
 
 ##### Install `wtester`
 
@@ -25,29 +28,24 @@ npm install -g wtester
 
 ### Start
 
-##### Create test spec(e2e/testSpec.js)
+##### Create test spec(testBing.js)
 
 ```.js
-wtester("case1", "http://localhost:8080/web/page1.html", null, function (flow) {
-    flow("^http://localhost:8080/web/page1\\.html(\\?.*)?$", true, function (env, done) {
-        env.ctx.testing = "login";
-        document.getElementById("login").click();
-        console.log("testing click login done...");
+wtester("bing", "http://www.bing.com", null, function (flow, command) {
+    flow("^.*\\.bing\\.com/(\\?.*)?$", true, function (env, done) {
+        document.getElementById("sb_form_q").value = "github centny";
+        document.getElementById("sb_form_go").click();
         done();
-    }, function (env, done) {
-        done();
-    }).debug({});
-    flow("http://localhost:8080/web/page2\\.html(\\?.*)?", false, function (env, done) {
-        if (env.ctx.testing != "login") {
-            throw "fail";
+    });
+    flow("^.*\\.bing\\.com/search.*$", false, function (env, done) {
+        var as = document.getElementsByTagName("a");
+        for (var i = 0; i < as.length; i++) {
+            if (as[i].href == 'https://github.com/Centny') {
+                done();
+                return;
+            }
         }
-        document.getElementById("account").value = "abc";
-        console.log("testing login done...");
-        done();
-    }).debug({
-        ctx: {
-            testing: "login",
-        },
+        throw "fail";
     });
 });
 ```
@@ -59,7 +57,7 @@ exports.config = {
     port: 8880,//proxy port
     selenium: 'http://127.0.0.1:4444/wd/hub',
     specs: [
-        'e2e/testSpec.js',
+        'testBing.js',
     ],
     capabilities: {
         'browserName': 'chrome',
@@ -77,7 +75,7 @@ exports.config = {
 wtester wtester-conf.js
 ```
 
-### Run the exampe
+### Run the more exampe
 * download code
 
 ```.sh
@@ -85,7 +83,6 @@ git clone https://github.com/Centny/WebTester.git
 ```
 
 * start static server
-
 ```.sh
 cd WebTester/test
 npm install connect serve-static
@@ -104,6 +101,36 @@ webdriver-manager start
 cd WebTester/test
 wtester wtester-conf.js
 ```
+
+### Reference
+
+##### wtester(name,starter,opts,exec)
+* `name` required,string the case name
+* `start` required,string the start url
+* `opts` optional,object the options for tester, deafult null
+  * `ctx` object, the initial context to run test.
+* `exec` required,function the flow executor, the argument is `flow,command`
+  * `flow` fuction, adding test case step
+  * `command` function, adding custom command
+
+##### flow(murl,open,worker,pre)
+* `murl` required,string the url regex pattern to match page for run the worker
+* `open` required,bool not used now
+* `workder` required,function the test code which running on browser, the argument is `env,done`
+  * `env` object, the current env transfter from prefix workder
+  * `done` function, completed current worker, not arguments.
+* `pre` optional,function the workder to initial something for the test workder
+  
+#### command(name,worker)
+* `name` required,string the command name.
+* `workder` required,function the command executor, the argument is `env,args,done`
+  * `env` object, the enviroment for running workder
+  * `env.browser` object, the webdriver object from [selenium-webdriver](https://github.com/SeleniumHQ/selenium/)
+  * `env.By` object, the By tools from [selenium-webdriver](https://github.com/SeleniumHQ/selenium/)
+  * `env.until` object, the until tool from [selenium-webdriver](https://github.com/SeleniumHQ/selenium/)
+  * `args` object, the command arguments from caller
+  * `done` function, completed the current worker and return the data or error, the argument is `data,err`
+
 
 ### Custom Command
 
@@ -182,4 +209,40 @@ wtester("case1", "http://localhost:8080/web/page1.html", {
         },
     });
 });
+```
+
+### Debug Test Case
+For debug test case on browser, you cant adding `<script type="text/javascript" src="e2e/testSpec.js" />` on your page and adding blow code to simple start flow by matchi url
+
+```.js
+if (typeof wtester === 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {//on nodejs debug
+        wt = require("wtester");
+        wtester = wt.wtester;
+    } else {//on browser debug
+        wtester = function(name, starter, opts, exec) {
+            exec(function(murl, open, worker, pre) {
+                return {
+                    debug: function(env) {
+                        if (!env.ctx) {
+                            env.ctx = {};
+                        }
+                        if (pre) {
+                            pre(env, function() {
+                                if (window.location.href.match(murl)) {
+                                    worker(env, function() { });
+                                }
+                            });
+                        } else {
+                            if (window.location.href.match(murl)) {
+                                worker(env, function() { });
+                            }
+                        }
+                    },
+                };
+            }, function(env, args, done) {
+            });
+        };
+    }
+}
 ```
