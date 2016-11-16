@@ -3,7 +3,9 @@ exports.config = {
     selenium: 'http://127.0.0.1:4444/wd/hub',
     specs: [
         'e2e/testSpec.js',
-        'e2e/testSpec2.js'
+        'e2e/testSpec2.js',
+        'e2e/testCtx01.js',
+        'e2e/testCtx02.js'
     ],
     capabilities: {
         'browserName': 'chrome',

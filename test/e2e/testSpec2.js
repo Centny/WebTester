@@ -19,7 +19,7 @@ if (typeof wtester === 'undefined') {
         };
     }
 }
-wtester("case1", "http://rcp.dev.gdy.io", null, function (flow) {
+wtester("spec2", "http://rcp.dev.gdy.io", null, function (flow) {
     flow("^http://rcp\\.dev\\.gdy\\.io/(.*\\.html)?(\\?.*)?$", true, function (env, done) {
         env.ctx.testing = "login";
         $("#login")[0].click();
