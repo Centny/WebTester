@@ -13,5 +13,11 @@ exports.config = {
             "driver": "INFO",
             "browser": "ALL"
         },
+        "chromeOptions": {
+            "args": ['--start-maximized']
+        }
+    },
+    settings: {
+        "fullscreen": 1,
     },
 };
