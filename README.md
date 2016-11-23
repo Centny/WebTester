@@ -131,6 +131,10 @@ wtester wtester-conf.js
   * `args` object, the command arguments from caller
   * `done` function, completed the current worker and return the data or error, the argument is `data,err`
 
+#### tester
+tester object contain some event handler and util function.
+* `tester.init` the initial function before call flow
+* `tester.readfile` the util to read file sync.
 
 ### Custom Command
 
@@ -210,6 +214,83 @@ wtester("case1", "http://localhost:8080/web/page1.html", {
     });
 });
 ```
+
+##### readfile
+read file
+* `name` required, the file name
+```.js
+wtester("cmd", "http://localhost:8080/web/page1.html", {
+    //the intitial test case env.
+    ctx: {
+        ws: __dirname,
+    },
+}, function (flow, command, tester) {
+    flow("^http://localhost:8080/web/page1\\.html(\\?.*)?$", true, function (env, done) {
+        //the test code on page1.html
+        env.exec("readfile", {
+            name: env.ctx.ws + "/../data/test.txt",
+        }, function (data, err) {
+            if (data !== "abc") {
+                throw "error";
+            }
+            done();
+        });
+    });
+});
+```
+
+### conf.settings Reference
+* `fullscreen` if do fullscreen when spec start or not
+
+
+### Context Reference
+the example config.js
+
+```
+exports.config = {
+    port: 8880,//proxy port
+    selenium: 'http://127.0.0.1:4444/wd/hub',
+    specs: [
+        'e2e/testSpec.js',
+        'e2e/testSpec2.js',
+        {
+            specs: [
+                'e2e/testCtx01.js',
+                'e2e/testCtx02.js'
+            ],
+            settings: {
+                "context": 1,
+            },
+        },
+        {
+            specs: [
+                'e2e/testSpec.js',
+                'e2e/testSpec2.js',
+            ],
+        },
+        "e2e/testCmd.js",
+        "e2e/testMulti.js",
+        "e2e/testTester.js",
+    ],
+    capabilities: {
+        'browserName': 'chrome',
+        "loggingPrefs": {
+            "driver": "INFO",
+            "browser": "ALL"
+        },
+        "chromeOptions": {
+            "args": ['--start-maximized']
+        }
+    },
+    settings: {
+        "fullscreen": 1,
+    },
+};
+```
+
+* `conf.specs` is not in the same context.
+* `e2e/testCtx01.js,e2e/testCtx02.js` is the same context control by `context:1`
+
 
 ### Debug Test Case
 For debug test case on browser, you cant adding `<script type="text/javascript" src="e2e/testSpec.js" />` on your page and adding blow code to simple start flow by matchi url
