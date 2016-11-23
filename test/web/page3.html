@@ -1,0 +1,27 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>page2</title>
+</head>
+<script type="text/javascript">
+    function trigger1(){
+        console.log("do trigger tg1");
+        wtester.trigger("tg1",{
+            msg:"trigger1",
+        });
+    }
+    function trigger2(){
+        console.log("do trigger tg2 after 3s");
+        setTimeout(function(){
+            wtester.trigger("tg2",{
+                msg:"trigger2",
+            });
+        },3000);
+    }
+</script>
+
+<body>
+</body>
+
+</html>
