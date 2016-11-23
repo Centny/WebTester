@@ -118,10 +118,13 @@ wtester wtester-conf.js
 * `open` required,bool not used now
 * `workder` required,function the test code which running on browser, the argument is `env,done`
   * `env` object, the current env transfter from prefix workder
+  * `env.exec` call the remote command by `name,args,callback`
+  * `env.on` monitor the event by `name,opts,handler`
+  * `env.trigger` trigger manual event.
   * `done` function, completed current worker, not arguments.
 * `pre` optional,function the workder to initial something for the test workder
   
-#### command(name,worker)
+##### command(name,worker)
 * `name` required,string the command name.
 * `workder` required,function the command executor, the argument is `env,args,done`
   * `env` object, the enviroment for running workder
@@ -131,7 +134,7 @@ wtester wtester-conf.js
   * `args` object, the command arguments from caller
   * `done` function, completed the current worker and return the data or error, the argument is `data,err`
 
-#### tester
+##### tester
 tester object contain some event handler and util function.
 * `tester.init` the initial function before call flow
 * `tester.readfile` the util to read file sync.
@@ -291,6 +294,45 @@ exports.config = {
 * `conf.specs` is not in the same context.
 * `e2e/testCtx01.js,e2e/testCtx02.js` is the same context control by `context:1`
 
+### Event Reference
+
+```.js
+wtester("evn", "http://localhost:8080/web/page3.html", null, function (flow, command, tester) {
+    flow("^http://localhost:8080/web/page3\\.html(\\?.*)?$", true, function (env, done) {
+        env.on("tg1", true, function (args) {
+            console.log(args.msg);
+            trigger2();
+        });
+        env.on("tg2", false, function (args) {
+            console.log(args.msg);
+            env.trigger("tg3", {
+                msg: "manual trigger",
+            });
+        });
+        env.on("tg3", true, function (args) {
+            console.log(args.msg);
+            env.trigger("tg4");
+        });
+        env.on("tg4", true, function (args) {
+            console.log(args);
+            env.trigger("tg5", { msg: "after 1s run" });
+        });
+        env.on("tg5", 1000, function (args) {
+            console.log(args.msg);
+            env.trigger("tg6");
+        });
+        env.on("tg6", 0, function (args) {
+            console.log(args);
+            env.trigger("tg7", { msg: "after 1.5s run" }, 1500);
+        });
+        env.on("tg7", true, function (args) {
+            console.log(args.msg);
+            done();
+        });
+        trigger1();
+    });
+});
+```
 
 ### Debug Test Case
 For debug test case on browser, you cant adding `<script type="text/javascript" src="e2e/testSpec.js" />` on your page and adding blow code to simple start flow by matchi url
