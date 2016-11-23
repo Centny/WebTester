@@ -19,7 +19,7 @@ if (typeof wtester === 'undefined') {
         };
     }
 }
-wtester("spec", "http://localhost:8080/web/page1.html", {
+wtester("tester", "http://localhost:8080/web/page1.html", {
     //the intitial test case env.
     ctx: {
         ws: __dirname,

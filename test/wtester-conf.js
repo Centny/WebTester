@@ -18,7 +18,10 @@ exports.config = {
                 'e2e/testSpec.js',
                 'e2e/testSpec2.js',
             ],
-        }
+        },
+        "e2e/testCmd.js",
+        "e2e/testMulti.js",
+        "e2e/testTester.js",
     ],
     capabilities: {
         'browserName': 'chrome',
